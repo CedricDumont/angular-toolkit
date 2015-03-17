@@ -1,7 +1,6 @@
 {
   "name": "angular-toolkit",
-  "version": "0.0.1",
-  "private": "true",
+  "version": "0.0.1-pre",
   "main": [
     "src/angular-toolkit.js",    
   ],
