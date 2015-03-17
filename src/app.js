@@ -5,7 +5,7 @@
         'ngRoute',
         'angular-toolkit'
     ]);
-
+ 
     app.controller('testCtrl', [function() {
         var vm = this;
         vm.message = 'angular-toolkit test app';
