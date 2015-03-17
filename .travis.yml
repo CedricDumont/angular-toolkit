@@ -2,7 +2,5 @@ language: node_js
 node_js:
   - "0.12"
 before_script:
-  - npm install -g gulp
-  - npm install --save-dev gulp-jshint
-  - npm install --save-dev gulp-jscs
+  - npm install -g gulp bower  
 script: gulp
