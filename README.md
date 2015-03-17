@@ -1,5 +1,5 @@
 # angular-toolkit
 
-[![Build Status](https://img.shields.io/badge/style-flat--squared-green.svg?style=flat-square)](https://travis-ci.org/angular/material)
+[![Build Status](https://travis-ci.org/CedricDumont/angular-toolkit.svg?branch=master)](https://travis-ci.org/CedricDumont/angular-toolkit)
 
 Angular toolkit are common tools for Auth, logging, dataservice, localstorage...
