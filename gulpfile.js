@@ -13,7 +13,7 @@ gulp.task('webserver', function() {
     }));
 })
 
-gulp.task('hint', function () {
+gulp.task('default', function () {
     gulp
         .src(['./src/**/*.js', './*.js'])
         .pipe(jscs())

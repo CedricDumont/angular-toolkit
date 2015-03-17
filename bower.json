@@ -2,7 +2,7 @@
   "name": "angular-toolkit",
   "version": "0.0.1-pre",
   "main": [
-    "src/angular-toolkit.js",    
+    "./src/angular-toolkit.js",    
   ],
   "dependencies": {
     "angular": "^1.3.0",
