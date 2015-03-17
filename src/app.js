@@ -5,10 +5,19 @@
         'ngRoute',
         'angular-toolkit'
     ]);
- 
-    app.controller('testCtrl', [function() {
+
+    app.controller('testCtrl', ['auth', function (auth) {
         var vm = this;
-        vm.message = 'angular-toolkit test app';
+        vm.message = '';
+
+        init();
+
+        function init() {
+            auth.login('testUser', 'testPwd').then(function (data) {
+                vm.message = data;
+            });
+        }
+
     }]);
 
 })();

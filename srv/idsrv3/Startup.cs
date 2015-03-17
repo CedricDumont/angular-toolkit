@@ -28,7 +28,8 @@ namespace idsrv3
 
                 var options = new IdentityServerOptions
                 {
-                    Factory = factory
+                    Factory = factory,
+                    CorsPolicy = CorsPolicy.AllowAll
                 };
 
                 app.UseIdentityServer(options);

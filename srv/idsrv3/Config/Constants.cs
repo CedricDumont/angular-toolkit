@@ -10,6 +10,6 @@ namespace idsrv3.Config
     {
         public const String AuthorizationUrl = "https://localhost:44333";
 
-        public const String ApiUrl = "http://localhost:8000";
+        public const String ApiUrl = "http://localhost:3000";
     }
 }

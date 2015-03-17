@@ -1,19 +1,16 @@
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
-
-/*
 var webserver = require('gulp-webserver');
 
 gulp.task('webserver', function() {
     log('satrting a webserver');
-  gulp.src('src')
+    gulp.src('src')
     .pipe(webserver({
       livereload: true,
       fallback: 'index.html'
     }));
-})µ
-*/
+});
 
 gulp.task('default', function () {
     gulp
