@@ -1,0 +1,26 @@
+{
+  "name": "angular-toolkit",
+  "version": "0.1.0",
+  "description": "angular-toolkit project",
+  "authors": [
+    "Cedric Dumont"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/CedricDumont/angular-toolkit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CedricDumont/angular-toolkit.git"
+  },
+  "scripts": {
+    "init": "npm install",
+    "install": "bower install",
+    "start": "node src/server/app.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-jscs": "^1.4.0",
+    "gulp-jshint": "^1.9.2",
+    "jshint-stylish": "^1.0.1"
+  }
+}

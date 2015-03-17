@@ -158,6 +158,38 @@ ClientBin/
 *.pfx
 *.publishsettings
 node_modules/
+bower_components/
+**/test/coverage
+report
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.xap
+*.zip
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Icon?
+Thumbs.db
+
 
 # RIA/Silverlight projects
 Generated_Code/
