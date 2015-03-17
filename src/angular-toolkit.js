@@ -1,5 +1,8 @@
-var test = 'hello world';
+(function () {
+    'use strict';
 
-var test2 = function () {
-    console.log('some other');
-};
+    var app = angular.module('angular-toolkit', []);
+
+    
+
+})();
