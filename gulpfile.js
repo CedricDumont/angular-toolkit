@@ -2,14 +2,21 @@ var gulp = require('gulp');
 var jshint = require('gulp-jshint');
 var jscs = require('gulp-jscs');
 var webserver = require('gulp-webserver');
+var concat = require('gulp-concat');
 
-gulp.task('webserver', function() {
+gulp.task('webserver', function () {
     log('satrting a webserver');
-    gulp.src('src')
-    .pipe(webserver({
-      livereload: true,
-      fallback: 'index.html'
-    }));
+    gulp.src(['build', 'src'])
+        .pipe(webserver({
+            livereload: true,
+            fallback: 'index.html'
+        }));
+});
+
+gulp.task('dist', function () {
+    return gulp.src(['./src/angular-*.js'])
+        .pipe(concat('angular-toolkit-dist.js'))
+        .pipe(gulp.dest('./src/'));
 });
 
 

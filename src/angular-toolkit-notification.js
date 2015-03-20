@@ -18,7 +18,8 @@
             addError: addError,
             addInfo: addInfo,
             addSuccess: addSuccess,
-            remove : remove
+            remove : remove,
+            getErrorHandler : getErrorHandler
         };
         
         function remove(notification){
@@ -27,6 +28,13 @@
                     currentNotifications.splice(i,1);
                 }
             }
+        }
+        
+        function getErrorHandler(description)
+        {
+            return function(){
+                addError(description);
+            };
         }
 
         function addWarning(message) {

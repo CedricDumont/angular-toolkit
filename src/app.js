@@ -3,6 +3,7 @@
 
     var app = angular.module('app', [
         'ngRoute',
+        'angular-toolkit',
         'angular-toolkit-auth',
         'angular-toolkit-notification'
     ]);
@@ -19,6 +20,9 @@
             }).
             when('/notifications', {
                 templateUrl: 'notifications.html',
+            }).
+            when('/interpolation', {
+                templateUrl: 'interpolation.html',
             }).
             otherwise({
                 redirectTo: '/login'
@@ -58,6 +62,8 @@
             vm.apiMessage = 'not called yet';
             vm.notificationMsg = '';
             vm.addNotification = addNotification;
+            vm.throwException = throwException;
+            vm.message = 'some message';
 
             vm.login = login;
             vm.callApi = callApi;
@@ -90,7 +96,11 @@
                     notifier.addInfo('received data');
                     vm.apiMessage = data;
 
-                });
+                }).catch(notifier.getErrorHandler('caugth error while calling api'));
+            }
+
+            function throwException() {
+                throw new Error('my own exception');
             }
 
             function addNotification() {
