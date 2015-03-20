@@ -1,0 +1,15 @@
+<div ng-controller="testCtrl as vm">
+user logged in dd: {{vm.loggedIn}}
+    <div ng-show="!vm.loggedIn">
+        username :
+        <input ng-model="vm.username" type="text" />
+        </br>
+        password :
+        <input ng-model="vm.password" type="text" />
+        </br>
+        <button ng-click="vm.login()">Login</button>
+    </div>
+    <div ng-show="vm.loggedIn">
+       user loggedin
+    </div>
+</div>

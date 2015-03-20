@@ -1,47 +1,157 @@
 (function () {
     'use strict';
 
-    var module = angular.module('angular-toolkit', ['angular-toolkit-http-utils']);
+    //defining the module
+    var module = angular.module('angular-toolkit-auth', [
+        'angular-toolkit-http-utils',
+        'angular-toolkit-object-utils',
+        'angular-toolkit-storage'
+    ]);
 
-    module.factory('auth', ['$http', 'httpUtils', function ($http, httpUtils) {
+    //defining Exceptions Objects 
+    function AuthException(message) {
+        this.name = 'LoginException';
+        this.message = message;
+    }
 
-        return {
-            login: login
-        };
+    AuthException.prototype = new Error();
+    AuthException.prototype.constructor = AuthException;
 
-        function login(username, password) {
 
-            var config = {
-                'Content-Type': 'application/x-www-form-urlencoded'
+    //configure the module
+    module.config(['$httpProvider', function ($httpProvider) {
+        $httpProvider.interceptors.push('requestAuthenticator');
+        $httpProvider.interceptors.push('loginRedirect');
+
+    }]);
+
+
+    //defining services
+    module.factory('auth', ['$http', 'httpUtils', 'objectUtils', 'loginRedirect', 'currentUser',
+                            function ($http, httpUtils, objectUtils, loginRedirect, currentUser) {
+
+            return {
+                login: login
             };
 
-            var data = httpUtils.formEncode({
-                username: username,
-                password: password,
-                grant_type: 'password',
-                scope: 'api1',
-                client_id:'MyAppClientId',
-                client_secret:'21B5F798-BE55-42BC-8AA8-0025B903DC3B'
-            });
+            function login(username, password) {
 
-            var result =
-                $http({
-                    method: 'POST',
-                    url: 'https://localhost:44333/connect/token',
-                    headers: config,
-                    data: data
-                })
-                .success(function (data, status, headers, config) {
-                    console.log(data);
-                })
-                .error(function (data, status, headers, config) {
-                    console.log(data);
+                var config = {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                };
+
+                var data = httpUtils.formEncode({
+                    username: username,
+                    password: password,
+                    grant_type: 'password',
+                    scope: 'api1',
+                    client_id: 'MyAppClientId',
+                    client_secret: '21B5F798-BE55-42BC-8AA8-0025B903DC3B'
                 });
 
-            return result;
-            //return data;
+                var result =
+                    $http({
+                        method: 'POST',
+                        url: 'https://localhost:44333/connect/token',
+                        headers: config,
+                        data: data
+                    })
+                    .success(function (data, status, headers, config) {
+                        objectUtils.assertProperty(data, 'access_token');
+
+                        currentUser.setProfile(username, data.access_token);
+                        loginRedirect.redirectPostLogin();
+                    })
+                    .error(function (data, status, headers, config) {
+                        throw new AuthException('could not login, received a ' +
+                            status + ' code from server [' + data + ']');
+                    });
+
+                return result;
+                //return data;
+            }
+
+    }]);
+
+    module.factory('currentUser', ['storage', function (storage) {
+
+        var USERKEY = 'user';
+
+        var profile = initialize();
+
+        return {
+            profile: profile,
+            setProfile: setProfile
+        };
+
+        function initialize() {
+            var user = {
+                username: '',
+                token: '',
+                get loggedIn() {
+                    if (this.token) {
+                        return true;
+                    }
+                    return false;
+                }
+            };
+
+            var localUser = storage.get(USERKEY);
+
+            if (localUser) {
+                user.username = localUser.username;
+                user.token = localUser.token;
+            }
+            
+            return user;
+
+        }
+
+        function setProfile(username, token) {
+            profile.username = username;
+            profile.token = token;
+            storage.add(USERKEY, profile);
         }
 
     }]);
+
+    module.factory('requestAuthenticator', ['$q', 'currentUser', function ($q, currentUser) {
+        return {
+            request: request,
+        };
+
+        function request(config) {
+            if (currentUser.profile.loggedIn) {
+                config.headers.Authorization = 'Bearer ' + currentUser.profile.token;
+            }
+            return $q.when(config);
+        }
+
+    }]);
+
+    module.factory('loginRedirect', ['$q', '$location', function ($q, $location) {
+        var lastPath = '/';
+        return {
+            responseError: responseError,
+            redirectPostLogin: redirectPostLogin
+        };
+
+        function responseError(response) {
+            if (response.status === 401) {
+                lastPath = $location.path();
+                $location.path('/login');
+            }
+            return $q.reject(response);
+
+        }
+
+        function redirectPostLogin() {
+            $location.path(lastPath);
+            lastPath = '/';
+        }
+
+    }]);
+
+
 
 })();
