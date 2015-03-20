@@ -5,7 +5,8 @@
     var module = angular.module('angular-toolkit-auth', [
         'angular-toolkit-http-utils',
         'angular-toolkit-object-utils',
-        'angular-toolkit-storage'
+        'angular-toolkit-storage',
+        'angular-toolkit-notification'
     ]);
 
     //defining Exceptions Objects 
@@ -17,7 +18,6 @@
     AuthException.prototype = new Error();
     AuthException.prototype.constructor = AuthException;
 
-
     //configure the module
     module.config(['$httpProvider', function ($httpProvider) {
         $httpProvider.interceptors.push('requestAuthenticator');
@@ -25,55 +25,67 @@
 
     }]);
 
+    module.provider('auth', function () {
+        var tokenEndpoint = '';
 
-    //defining services
-    module.factory('auth', ['$http', 'httpUtils', 'objectUtils', 'loginRedirect', 'currentUser',
-                            function ($http, httpUtils, objectUtils, loginRedirect, currentUser) {
+        this.setTokenEndpoint = function (endpoint) {
+            tokenEndpoint = endpoint;
+        };
 
-            return {
-                login: login
-            };
-
-            function login(username, password) {
-
-                var config = {
-                    'Content-Type': 'application/x-www-form-urlencoded'
+        this.$get = ['$http', 'httpUtils', 'objectUtils', 'loginRedirect', 'currentUser', 'notifier',
+                            function ($http, httpUtils, objectUtils, loginRedirect, currentUser, notifier) {
+                return {
+                    login: login,
+                    logout : logout
                 };
 
-                var data = httpUtils.formEncode({
-                    username: username,
-                    password: password,
-                    grant_type: 'password',
-                    scope: 'api1',
-                    client_id: 'MyAppClientId',
-                    client_secret: '21B5F798-BE55-42BC-8AA8-0025B903DC3B'
-                });
+                function logout() {
+                    currentUser.setProfile('','');
+                }
 
-                var result =
-                    $http({
-                        method: 'POST',
-                        url: 'https://localhost:44333/connect/token',
-                        headers: config,
-                        data: data
-                    })
-                    .success(function (data, status, headers, config) {
-                        objectUtils.assertProperty(data, 'access_token');
+                function login(username, password) {
 
-                        currentUser.setProfile(username, data.access_token);
-                        loginRedirect.redirectPostLogin();
-                    })
-                    .error(function (data, status, headers, config) {
-                        throw new AuthException('could not login, received a ' +
-                            status + ' code from server [' + data + ']');
+                    var config = {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    };
+
+                    var data = httpUtils.formEncode({
+                        username: username,
+                        password: password,
+                        grant_type: 'password',
+                        scope: 'api1',
+                        client_id: 'MyAppClientId',
+                        client_secret: '21B5F798-BE55-42BC-8AA8-0025B903DC3B'
                     });
 
-                return result;
-                //return data;
-            }
+                    var result =
+                        $http({
+                            method: 'POST',
+                            url: tokenEndpoint,
+                            headers: config,
+                            data: data
+                        })
+                        .success(function (data, status, headers, config) {
+                            
+                            objectUtils.assertProperty(data, 'access_token');
 
-    }]);
+                            currentUser.setProfile(username, data.access_token);
 
-    module.factory('currentUser', ['storage', function (storage) {
+                            loginRedirect.redirectPostLogin();
+                        })
+                        .error(function (data, status, headers, config) {
+                            throw new AuthException('could not login, received a ' +
+                                status + ' code from server [' + data + ']');
+                        });
+
+                    return result;
+                    //return data;
+                }
+                            }];
+
+    });
+
+    module.factory('currentUser', ['storage', 'notifier' , function (storage, notifier) {
 
         var USERKEY = 'user';
 
@@ -81,8 +93,16 @@
 
         return {
             profile: profile,
-            setProfile: setProfile
+            setProfile: setProfile,
+            remove: remove
         };
+
+        function remove() {
+            notifier.addDebug('remove user');
+            storage.remove(USERKEY);
+            profile = initialize();
+        }
+
 
         function initialize() {
             var user = {
@@ -99,10 +119,11 @@
             var localUser = storage.get(USERKEY);
 
             if (localUser) {
+                notifier.addDebug('fill from localstorage');
                 user.username = localUser.username;
                 user.token = localUser.token;
             }
-            
+
             return user;
 
         }
@@ -110,18 +131,20 @@
         function setProfile(username, token) {
             profile.username = username;
             profile.token = token;
+            notifier.addDebug('add profile to storage');
             storage.add(USERKEY, profile);
         }
 
-    }]);
+        }]);
 
-    module.factory('requestAuthenticator', ['$q', 'currentUser', function ($q, currentUser) {
+    module.factory('requestAuthenticator', ['$q', 'currentUser','notifier', function ($q, currentUser, notifier) {
         return {
             request: request,
         };
 
         function request(config) {
             if (currentUser.profile.loggedIn) {
+                notifier.addDebug('user requesting is logged in ' + currentUser.profile.loggedIn);
                 config.headers.Authorization = 'Bearer ' + currentUser.profile.token;
             }
             return $q.when(config);

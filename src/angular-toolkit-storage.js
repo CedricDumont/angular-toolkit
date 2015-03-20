@@ -13,7 +13,7 @@
         return {
             add: add,
             get : get,
-            remode:remove
+            remove:remove
         };
         
         function add(key, value){
@@ -31,7 +31,7 @@
         }
         
         function remove(key){
-            store.removeItem(key);
+            store.removeItem(buildKey(key));
         }
         
         function buildKey(key)

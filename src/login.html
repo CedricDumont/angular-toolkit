@@ -1,6 +1,6 @@
 <div ng-controller="testCtrl as vm">
-user logged in dd: {{vm.loggedIn}}
-    <div ng-show="!vm.loggedIn">
+    user logged in : {{vm.loggedIn}}</br>
+    <div ng-if="!vm.loggedIn">
         username :
         <input ng-model="vm.username" type="text" />
         </br>
@@ -9,7 +9,9 @@ user logged in dd: {{vm.loggedIn}}
         </br>
         <button ng-click="vm.login()">Login</button>
     </div>
-    <div ng-show="vm.loggedIn">
-       user loggedin
+    <div ng-if="vm.loggedIn">
+       user loggedin : <button ng-click="vm.logout()">logout</button>
     </div>
+
+ 
 </div>

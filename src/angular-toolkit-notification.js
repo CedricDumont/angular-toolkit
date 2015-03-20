@@ -7,7 +7,7 @@
 
     module.factory('notifier', ['$timeout', function ($timeout) {
 
-        var currentNotifications = ['none'];
+        var currentNotifications = [];
         var notificationTypes = ['info', 'success', 'error','warning'];
         var timeout = 5000;
 
@@ -17,6 +17,7 @@
             addWarning: addWarning,
             addError: addError,
             addInfo: addInfo,
+            addDebug : addDebug,
             addSuccess: addSuccess,
             remove : remove,
             getErrorHandler : getErrorHandler
@@ -48,6 +49,10 @@
         function addInfo(message) {
             add('info', message);
         }
+        
+        function addDebug(message) {
+            add('debug', message);
+        }
 
         function addSuccess(message) {
             add('success', message);
@@ -70,7 +75,8 @@
         return {
             restrict: 'AE',
             scope: {},
-            template: '{{notifications}}',
+            template: '<div ng-repeat="notification in notifications">' + 
+                        '{{notification.type}} - {{notification.message}}</div>',
             link: function (scope) {
                 scope.notifications = notifier.notifications;
             }
