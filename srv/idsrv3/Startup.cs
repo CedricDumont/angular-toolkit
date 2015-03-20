@@ -8,6 +8,7 @@ using Thinktecture.IdentityServer.Core.Services.InMemory;
 using System.Collections.Generic;
 using Thinktecture.IdentityServer.AccessTokenValidation;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 
 namespace idsrv3
@@ -47,6 +48,8 @@ namespace idsrv3
 
                 //configure web api
                 var config = new HttpConfiguration();
+                EnableCorsAttribute cors = new EnableCorsAttribute("*", "*", "*");
+                config.EnableCors(cors);
                 config.MapHttpAttributeRoutes();
                 config.Filters.Add(new AuthorizeAttribute());
                 app.UseWebApi(config);
