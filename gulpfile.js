@@ -16,7 +16,7 @@ gulp.task('webserver', function () {
 gulp.task('dist', function () {
     return gulp.src(['./src/angular-*.js'])
         .pipe(concat('angular-toolkit-dist.js'))
-        .pipe(gulp.dest('./src/'));
+        .pipe(gulp.dest('./dist/'));
 });
 
 
