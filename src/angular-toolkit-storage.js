@@ -5,37 +5,47 @@
 
     /* defining services */
 
-    module.factory('storage', ['$window',function ($window) {
+    module.factory('storage', ['$window', function ($window) {
 
         var prefix = 'at';
+
         var store = $window.localStorage;
 
         return {
             add: add,
-            get : get,
-            remove:remove
+            get: get,
+            remove: remove,
+            count: count,
+            clear: clear
         };
-        
-        function add(key, value){
+
+        function add(key, value) {
             value = angular.toJson(value);
             store.setItem(buildKey(key), value);
         }
-        
-        function get(key){
+
+        function get(key) {
             var value = store.getItem(buildKey(key));
-            
-            if(value){
+
+            if (value) {
                 value = angular.fromJson(value);
             }
             return value;
         }
-        
-        function remove(key){
+
+        function remove(key) {
             store.removeItem(buildKey(key));
         }
-        
-        function buildKey(key)
-        {
+
+        function count() {
+            return store.length;
+        }
+
+        function clear() {
+            store.clear();
+        }
+
+        function buildKey(key) {
             return prefix + '-' + key;
         }
 
