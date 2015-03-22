@@ -34,31 +34,7 @@
     });
 
 
-    /*app.run([
-          '$rootScope',
-          function ($rootScope) {
-            $rootScope.$on('$routeChangeStart', function (event, next, current) {
-                // next is an object that is the route that we are starting to go to
-                // current is an object that is the route where we are currently
-                var currentPath = current.originalPath;
-                var nextPath = next.originalPath;
-
-                console.log('Starting to leave %s to go to %s', currentPath, nextPath);
-            });
-
-            $rootScope.$on('$routeChangeError', function (event, next, current) {
-                // next is an object that is the route that we are starting to go to
-                // current is an object that is the route where we are currently
-                var currentPath = current.originalPath;
-                var nextPath = next.originalPath;
-
-                console.log('Error to leave %s to go to %s', currentPath, nextPath);
-            });
-      }
-    ]);
-    */
-
-    app.controller('testCtrl', ['$rootScope', '$http', '$location', 'auth', 'currentUser', 'notifier',
+    app.controller('demoCtrl', ['$rootScope', '$http', '$location', 'auth', 'currentUser', 'notifier',
                                 function ($rootScope, $http, $location, auth, currentUser, notifier) {
             var vm = this;
             vm.username = 'testUser';
