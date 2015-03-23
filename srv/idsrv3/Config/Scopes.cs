@@ -12,12 +12,12 @@ namespace idsrv3.Config
         public static List<Scope> Get()
         {
             return new List<Scope>
-        {
-            new Scope
             {
-                Name = "api1"
-            }
-        };
+                new Scope
+                {
+                    Name = "api1"
+                }
+            };
         }
     }
 }

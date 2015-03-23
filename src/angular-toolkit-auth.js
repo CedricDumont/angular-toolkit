@@ -27,23 +27,82 @@
 
     module.provider('auth', function () {
         var tokenEndpoint = '';
+        var authenticationTypes = ['Bearer']; // could be 'Basic', 'Cookies' ..
+        var _authenticationType = '';
 
         this.setTokenEndpoint = function (endpoint) {
             tokenEndpoint = endpoint;
         };
 
-        this.$get = ['$http', 'httpUtils', 'objectUtils', 'loginRedirect', 'currentUser', 'notifier',
-                            function ($http, httpUtils, objectUtils, loginRedirect, currentUser, notifier) {
+        this.setAuthenticationType = function (authType) {
+            _authenticationType = authType;
+        };
+
+
+        this.$get = ['$http', 'httpUtils', 'objectUtils', 'loginRedirect', 'principal', 'notifier',
+                            function ($http, httpUtils, objectUtils, loginRedirect, principal, notifier) {
+
+                //Configure the auth type
+                principal.setAuthenticationType(_authenticationType);
+
                 return {
                     login: login,
-                    logout : logout
+                    logout: logout,
+                    endpoint: endpoint
                 };
 
+                function endpoint() {
+                    return tokenEndpoint;
+                }
+
                 function logout() {
-                    currentUser.setProfile('','');
+                    principal.setProfile('', '');
                 }
 
                 function login(username, password) {
+
+                    var config = {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    };
+
+                    var data = httpUtils.formEncode({
+                        client_id: 'implicitclient',
+                        response_type :'token',                        
+                        redirect_uri : 'http://localhost:8000/demoApp/index.html',
+                        scope: 'api1',
+                        state : '123',
+                        nonce:'12345'
+                    });
+
+                    var result =
+                        $http({
+                            method: 'GET',
+                            url: tokenEndpoint + '?' + data,
+                            headers: config,
+                            //data: data
+                        })
+                        .success(function (data, status, headers, config) {
+
+                            console.log(data);
+
+                            objectUtils.assertProperty(data, 'access_token');
+
+                            principal.setProfile(username, data.access_token);
+
+                            loginRedirect.redirectPostLogin();
+                        })
+                        .error(function (data, status, headers, config) {
+                            console.log('error ' + data);
+                            console.log(status);
+                            throw new AuthException('could not login, received a ' +
+                                status + ' code from server [' + data + ']');
+                        });
+
+                    return result;
+                }
+
+
+                function loginOauth2(username, password) {
 
                     var config = {
                         'Content-Type': 'application/x-www-form-urlencoded'
@@ -66,10 +125,12 @@
                             data: data
                         })
                         .success(function (data, status, headers, config) {
-                            
+
+                            console.log(data);
+
                             objectUtils.assertProperty(data, 'access_token');
 
-                            currentUser.setProfile(username, data.access_token);
+                            principal.setProfile(username, data.access_token);
 
                             loginRedirect.redirectPostLogin();
                         })
@@ -85,67 +146,81 @@
 
     });
 
-    module.factory('currentUser', ['storage', 'notifier' , function (storage, notifier) {
-
-        var USERKEY = 'user';
-
-        var profile = initialize();
-
-        return {
-            profile: profile,
-            setProfile: setProfile,
-            remove: remove
-        };
-
-        function remove() {
-            notifier.addDebug('remove user');
-            storage.remove(USERKEY);
-            profile = initialize();
-        }
+    module.provider('principal', function () {
 
 
-        function initialize() {
-            var user = {
-                username: '',
-                token: '',
-                get loggedIn() {
-                    if (this.token) {
-                        return true;
-                    }
-                    return false;
-                }
+
+        this.$get = ['storage', 'notifier', function (storage, notifier) {
+
+            var IDENTITY_KEY = 'Identity';
+
+            var identity = initialize();
+
+            var authenticationInfo = [];
+
+            return {
+                identity: identity,
+                setProfile: setProfile,
+                setAuthenticationType: setAuthenticationType,
+                remove: remove
             };
 
-            var localUser = storage.get(USERKEY);
-
-            if (localUser) {
-                notifier.addDebug('fill from localstorage');
-                user.username = localUser.username;
-                user.token = localUser.token;
+            function remove() {
+                notifier.addDebug('remove principal');
+                storage.remove(IDENTITY_KEY);
+                identity = initialize();
             }
 
-            return user;
+            function setAuthenticationType(authType) {
+                identity.authenticationType = authType;
+            }
 
-        }
 
-        function setProfile(username, token) {
-            profile.username = username;
-            profile.token = token;
-            notifier.addDebug('add profile to storage');
-            storage.add(USERKEY, profile);
-        }
+            function initialize() {
+                var identity = {
+                    name: '',
+                    token: '',
+                    authenticationType: 'None',
+                    get isAuthenticated() {
+                        if (this.token) {
+                            return true;
+                        }
+                        return false;
+                    }
+                };
 
-        }]);
+                var localIdentity = storage.get(IDENTITY_KEY);
 
-    module.factory('requestAuthenticator', ['$q', 'currentUser','notifier', function ($q, currentUser, notifier) {
+                if (localIdentity) {
+                    notifier.addDebug('fill from localstorage');
+                    identity.name = localIdentity.name;
+                    identity.authenticationType = localIdentity.authenticationType;
+                    identity.token = localIdentity.token;
+                }
+
+                return identity;
+
+            }
+
+            function setProfile(username, token) {
+                identity.name = username;
+                identity.token = token;
+                notifier.addDebug('add profile to storage');
+                storage.add(IDENTITY_KEY, identity);
+            }
+
+        }];
+    });
+
+
+    module.factory('requestAuthenticator', ['$q', 'principal', function ($q, principal) {
         return {
             request: request,
         };
 
         function request(config) {
-            if (currentUser.profile.loggedIn) {
-                notifier.addDebug('user requesting is logged in ' + currentUser.profile.loggedIn);
-                config.headers.Authorization = 'Bearer ' + currentUser.profile.token;
+            if (principal.identity.isAuthenticated) {
+                config.headers.Authorization = 'Bearer ' + principal.identity.token;
             }
             return $q.when(config);
         }

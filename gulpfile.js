@@ -9,7 +9,7 @@ gulp.task('webserver', function () {
     gulp.src(['build', 'src'])
         .pipe(webserver({
             livereload: true,
-            fallback: 'index.html'
+            fallback: 'demoApp/index.html'
         }));
 });
 

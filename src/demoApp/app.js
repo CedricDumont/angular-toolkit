@@ -30,16 +30,19 @@
     }]);
 
     app.config(function (authProvider) {
+      /*  https://localhost:44333/core/connect/authorize
         authProvider.setTokenEndpoint('https://localhost:44333/connect/token');
+       */ 
+        authProvider.setTokenEndpoint('https://localhost:44333/connect/authorize');
     });
 
 
-    app.controller('demoCtrl', ['$rootScope', '$http', '$location', 'auth', 'currentUser', 'notifier',
-                                function ($rootScope, $http, $location, auth, currentUser, notifier) {
+    app.controller('demoCtrl', ['$rootScope', '$http', '$location', 'auth', 'principal', 'notifier',
+                                function ($rootScope, $http, $location, auth, principal, notifier) {
             var vm = this;
             vm.username = 'testUser';
             vm.password = 'testPwd';
-            vm.loggedIn = currentUser.profile.loggedIn;
+            vm.loggedIn = principal.identity.isAuthenticated;
             vm.apiMessage = 'not called yet';
             vm.notificationMsg = '';
             vm.addNotification = addNotification;
@@ -57,14 +60,14 @@
                 
                 vm.loggedIn = false;
                 
-                notifier.addDebug('logged out user logged in ?' + currentUser.profile.loggedIn);
-                notifier.addDebug(currentUser.profile);
+                notifier.addDebug('logged out user logged in ?' + principal.identity.isAuthenticated);
+                notifier.addDebug(principal.identity);
             }
 
             function login() {
                 console.log(vm.username);
                 auth.login(vm.username, vm.password).then(function (data) {
-                    vm.loggedIn = currentUser.profile.loggedIn;
+                    vm.loggedIn = principal.identity.isAuthenticated;
                     notifier.addSuccess('loggedIn' + vm.loggedIn);
                 }).catch(notifier.getErrorHandler('error while logged in'));
             }
