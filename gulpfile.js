@@ -8,7 +8,7 @@ gulp.task('webserver', function () {
     log('satrting a webserver');
     gulp.src(['build', 'src'])
         .pipe(webserver({
-            livereload: true,
+            //livereload: true,
             fallback: 'demoApp/index.html'
         }));
 });

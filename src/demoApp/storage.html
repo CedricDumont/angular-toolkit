@@ -1,0 +1,19 @@
+<div ng-controller="storageCtrl as vm">
+    </br>
+
+    <table>
+        <tr collspan="2"><b>storage content</b></tr>
+        <tr>
+            <td><strong>key</strong>
+            </td>
+            <td><strong>value</strong>
+            </td>
+        </tr>
+        <tr ng-repeat="item in vm.items">
+            <td>{{item.key}}</td>
+            <td>{{item.value}}</td>
+        </tr>
+
+    </table>
+
+</div>

@@ -43,22 +43,25 @@ namespace idsrv3.Config
                    // AllowedCorsOrigins = new List<String>(){"*"},
                     
                     ClientUri = "http://www.example.com",
+                    
                    
                     RequireConsent = true,
                     AllowRememberConsent = true,
 
                     RedirectUris = new List<string>
                     {
-                        // JavaScript client
-                        "http://localhost:8000/demoApp/index.html",
+                        
+                        "http://localhost:8000/demoApp/index.html#/openid-redirect/"
                                              
                     },
 
                     PostLogoutRedirectUris = new List<string>
                     {
-                        "http://localhost:3000/index.html",
+                        "http://localhost:8000/demoApp/index.html/"
                     },
-                    
+
+                
+
                     IdentityTokenLifetime = 360,
                     AccessTokenLifetime = 3600
                 },

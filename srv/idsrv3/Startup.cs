@@ -27,8 +27,20 @@ namespace idsrv3
                                     clients: Clients.Get(),
                                     users: Users.Get());
 
+                var authenticationOptions = new AuthenticationOptions
+                {
+                    
+                    //RequireAuthenticatedUserForSignOutMessage = true,
+                    //EnableSignOutPrompt = false,
+                    //EnablePostSignOutAutoRedirect = true,
+                    //PostSignOutAutoRedirectDelay = 0,
+
+                };
+
                 var options = new IdentityServerOptions
                 {
+                    
+                    AuthenticationOptions = authenticationOptions,
                     SigningCertificate = Certificate.Get(),
                     Factory = factory,
                     CorsPolicy = CorsPolicy.AllowAll,

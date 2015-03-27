@@ -15,6 +15,9 @@
             when('/login', {
                 templateUrl: 'login.html'
             }).
+            when('/loggedIn', {
+                templateUrl: 'loggedIn.html'
+            }).
             when('/callApi', {
                 templateUrl: 'callApi.html',
             }).
@@ -24,21 +27,32 @@
             when('/interpolation', {
                 templateUrl: 'interpolation.html',
             }).
+            when('/storage', {
+                templateUrl: 'storage.html',
+            }).
             otherwise({
                 redirectTo: '/login'
             });
     }]);
 
-    app.config(function (authProvider) {
-      /*  https://localhost:44333/core/connect/authorize
-        authProvider.setTokenEndpoint('https://localhost:44333/connect/token');
-       */ 
-        authProvider.setTokenEndpoint('https://localhost:44333/connect/authorize');
+    app.config(function (authProvider, openIdProvider) {
+        authProvider.setPostLoginRedirection('http://localhost:8000/demoApp/#/loggedIn');
+        openIdProvider.setBaseAppRef('demoApp/index.html');
+        openIdProvider.setAuthorityEndpoint('https://localhost:44333');
     });
 
+    app.controller('callbackCtrl', ['$routeParams', '$http', '$location', 'auth', 'principal', 'notifier',
+                                function ($routeParams, $http, $location, auth, principal, notifier) {
+            var vm = this;
+            vm.message = $routeParams.token;
 
-    app.controller('demoCtrl', ['$rootScope', '$http', '$location', 'auth', 'principal', 'notifier',
-                                function ($rootScope, $http, $location, auth, principal, notifier) {
+    }]);
+
+
+
+    app.controller('demoCtrl', [
+        '$rootScope', '$routeParams', '$http', '$location', 'auth', 'principal', 'notifier', 'openId',
+        function ($rootScope, $routeParams, $http, $location, auth, principal, notifier, openId) {
             var vm = this;
             vm.username = 'testUser';
             vm.password = 'testPwd';
@@ -55,21 +69,11 @@
             vm.goToCallApi = goToCallApi;
 
             function logout() {
-                
                 auth.logout();
-                
-                vm.loggedIn = false;
-                
-                notifier.addDebug('logged out user logged in ?' + principal.identity.isAuthenticated);
-                notifier.addDebug(principal.identity);
             }
 
             function login() {
-                console.log(vm.username);
-                auth.login(vm.username, vm.password).then(function (data) {
-                    vm.loggedIn = principal.identity.isAuthenticated;
-                    notifier.addSuccess('loggedIn' + vm.loggedIn);
-                }).catch(notifier.getErrorHandler('error while logged in'));
+                auth.login();
             }
 
             function goToCallApi() {
@@ -92,5 +96,20 @@
             function addNotification() {
                 notifier.addInfo(vm.notificationMsg);
             }
+    }]);
+
+    app.controller('storageCtrl', [
+        'storage',
+        function (storage) {
+            var vm = this;
+
+            vm.items = {};
+
+            init();
+
+            function init() {
+                vm.items = storage.items();
+            }
+
     }]);
 })();

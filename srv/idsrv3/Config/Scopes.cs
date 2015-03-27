@@ -11,13 +11,20 @@ namespace idsrv3.Config
     {
         public static List<Scope> Get()
         {
-            return new List<Scope>
-            {
-                new Scope
+            List<Scope> scopes = new List<Scope>();
+
+            scopes.AddRange(StandardScopes.All);
+            scopes.Add(new Scope
                 {
-                    Name = "api1"
-                }
-            };
+                    Name = "api1",
+                    DisplayName = "some scope",
+                    Emphasize = true,
+                    ShowInDiscoveryDocument = true,
+                    Type = ScopeType.Resource
+
+                });
+
+            return scopes;
         }
     }
 }

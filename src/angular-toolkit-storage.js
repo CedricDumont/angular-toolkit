@@ -8,20 +8,33 @@
     module.factory('storage', ['$window', function ($window) {
 
         var prefix = 'at';
-
         var store = $window.localStorage;
-
         return {
             add: add,
             get: get,
             remove: remove,
             count: count,
-            clear: clear
+            clear: clear,
+            items: items
         };
 
         function add(key, value) {
             value = angular.toJson(value);
             store.setItem(buildKey(key), value);
+        }
+
+        function items() {
+            var result = [];
+
+            for (var key in store) {
+                result.push({
+                    key: key,
+                    value: store[key]
+                });
+            }
+
+            return result;
+
         }
 
         function get(key) {
