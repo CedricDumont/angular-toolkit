@@ -22,6 +22,8 @@
             value = angular.toJson(value);
             store.setItem(buildKey(key), value);
         }
+        
+        
 
         function items() {
             var result = [];

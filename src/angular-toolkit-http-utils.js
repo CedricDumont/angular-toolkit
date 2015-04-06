@@ -4,11 +4,12 @@
     var module = angular.module('angular-toolkit-http-utils', []);
     //added for commit 2
 
-    module.factory('httpUtils', [function () {
+    module.factory('httpUtils', ['$window', function ($window) {
 
         return {
             formEncode: formEncode,
-            decodeURL: decodeURL
+            decodeURL: decodeURL,
+            redirectBrowserTo : redirectBrowserTo
         };
 
         function formEncode(data) {
@@ -41,6 +42,11 @@
 
               return result;*/
 
+        }
+        
+        function redirectBrowserTo(url)
+        {
+            $window.location.href = url;
         }
 
     }]);

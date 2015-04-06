@@ -19,6 +19,7 @@ module.exports = function (config) {
           '../bower_components/angular-mocks/angular-mocks.js', 
           '../bower_components/angular-route/ngRoute.js',  
           './utils/test-helper.js',
+          './utils/jasmine-sinon.js', // to use sinon matchers
           '../src/**/*.js',
           './unit/**/*.js'
         ],
