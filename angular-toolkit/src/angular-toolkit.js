@@ -10,7 +10,7 @@ if(typeof KJUR=="undefined"||!KJUR){KJUR={}}if(typeof KJUR.jws=="undefined"||!KJ
  if (typeof String.prototype.startsWith != 'function') {
         String.prototype.startsWith = function (str) {
             return this.slice(0, str.length) == str;
-        };
+        }; 
     };
 
     if (typeof String.prototype.capitalize != 'function') {

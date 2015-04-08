@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.22609.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "angular_toolkit", "angular-toolkit\angular_toolkit.kproj", "{5F1BF23D-8874-4080-8897-C70EDA301E32}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "idsrv3", "idsrv3\idsrv3.kproj", "{DF6F52BE-210F-48DA-8283-9D3F9A5C2143}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{5F1BF23D-8874-4080-8897-C70EDA301E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5F1BF23D-8874-4080-8897-C70EDA301E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5F1BF23D-8874-4080-8897-C70EDA301E32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF6F52BE-210F-48DA-8283-9D3F9A5C2143}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF6F52BE-210F-48DA-8283-9D3F9A5C2143}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF6F52BE-210F-48DA-8283-9D3F9A5C2143}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF6F52BE-210F-48DA-8283-9D3F9A5C2143}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

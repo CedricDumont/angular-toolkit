@@ -597,9 +597,9 @@
                         discoveryFile: result.data,
                         store: storage,
                         baseAppRef: _baseAppRef,
-                        clientId: '3MVG9A_f29uWoVQsOJ33xZnEcrNSg0uWCIbXeiTXTwMleZuYoekI6B.XgKJ3bJ1PPAib9TLX.EYfC004ZUBvw' // jshint ignore:line
+                        //clientId: '3MVG9A_f29uWoVQsOJ33xZnEcrNSg0uWCIbXeiTXTwMleZuYoekI6B.XgKJ3bJ1PPAib9TLX.EYfC004ZUBvw' // jshint ignore:line
                             //clientId: '116616979000-bu0mthqdsfqe7pn794eamhucf4gvc1t6.apps.googleusercontent.com'
-                            //clientId: 'implicitclient'
+                            clientId: 'implicitclient'
                     };
 
                     config.discoveryFile.certs = result.certs;
@@ -659,7 +659,7 @@
 
         return {
             restrict: 'E',
-            template: 'principal is logged in {{loggedIn}}',
+            template: 'principal is logged f in {{loggedIn}}',
             scope: {},
             link: function (scope, element, attrs) {
                 scope.loggedIn = principal.identity.isAuthenticated;
