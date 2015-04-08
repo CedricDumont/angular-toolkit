@@ -5,6 +5,8 @@ var webserver = require('gulp-webserver');
 var concat = require('gulp-concat');
 var karma = require('gulp-karma');
 
+gulp.task('default', ['print-usage']);
+
 gulp.task('code', ['webserver','start-karma']);
 
 gulp.task('webserver', function () {
@@ -20,8 +22,15 @@ gulp.task('dist-on-save', function () {
     gulp.watch('./src/**/*.js', ['dist']);
 });
 
-gulp.task('print-debug', function () {
-    console.log('debug');
+gulp.task('print-usage', function () {
+    console.log('-------------------------------------------------------------------------------');
+    console.log('USAGE : ');
+    console.log('');
+    console.log('code => task to run when you code. it starts a webserver and the karma tests');
+    console.log('dist => create the distribution file.');
+    console.log('');
+    console.log('');
+    console.log('-------------------------------------------------------------------------------');
 });
 
 gulp.task('dist', function () {
